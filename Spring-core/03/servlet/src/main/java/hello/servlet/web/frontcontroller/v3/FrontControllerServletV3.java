@@ -38,7 +38,7 @@ public class FrontControllerServletV3 extends HttpServlet {
 
         // paramMap
 
-        Map<String, String> paramMap = creatParamMap(request);
+        Map<String, String> paramMap = createParamMap(request);
         ModelView mv = controller.process(paramMap);
 
         String viewName = mv.getViewName();
@@ -51,7 +51,7 @@ public class FrontControllerServletV3 extends HttpServlet {
         return new MyView("/WEB-INF/views/" + viewName + ".jsp");
     }
 
-    private Map<String, String> creatParamMap(HttpServletRequest request) {
+    private Map<String, String> createParamMap(HttpServletRequest request) {
         Map<String, String> paramMap = new HashMap<>();
         request.getParameterNames().asIterator() // getParameterNames로 모든 파라미터의 이름을 가져옴
                 .forEachRemaining(paramName -> paramMap.put(paramName, request.getParameter(paramName))); // key / value로 모든 파라미터를 다 꺼내옴.
