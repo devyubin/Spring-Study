@@ -162,3 +162,91 @@ HandlerAdapter(핸들러 어댑터)
   컨트롤러 클래스를 유연하게 하나로 통합할 수 있다.
 - 스프링 MVC는 개발자가 편리하게 개발할 수 있도록 수 많은 편의 기능을 제공한다.
   실무에서는 지금부터 설명하는 방식을 주로 사용한다.
+
+### 6. 스프링 MVC - 기본 기능
+#### 로깅
+로그 선언
+- `private Logger log = LoggerFactory.getLogger(getClass());`
+- `private static final Logger log = LoggerFactory.getLogger(Xxx.class) `
+- `@Slf4j` : 롬복 사용 가능  
+
+로그 사용시 장점
+- 쓰레드 정보, 클래스 이름 같은 부가 정보를 함께 볼 수 있고, 출력 모양을 조정할 수 있다.
+- 로그 레벨에 따라 개발 서버에서는 모든 로그를 출력하고, 운영서버에서는 출력하지 않는 등 로그를 상황에 맞게 조절할 수 있다.
+
+#### HTTP 요청
+**클라이언트에서 서버로 요청 데이터를 전달할 때는 주로 다음 3가지 방법을 사용한다.** 
+- GET - 쿼리 파라미터
+  - /url **?username=hello&age=20**
+  - 메시지 바디 없이, URL의 쿼리 파라미터에 데이터를 포함해서 전달 
+  - 예) 검색, 필터, 페이징등에서 많이 사용하는 방식
+- POST - HTML Form
+  - content-type: application/x-www-form-urlencoded
+  - 메시지 바디에 쿼리 파리미터 형식으로 전달 username=hello&age=20 
+  - 예) 회원 가입, 상품 주문, HTML Form 사용
+- **HTTP message body**에 데이터를 직접 담아서 요청 
+  - HTTP API에서 주로 사용, JSON, XML, TEXT 
+  - 데이터 형식은 주로 JSON 사용
+  - POST, PUT, PATCH
+  
+스프링 MVC는 다음 파라미터를 지원한다.
+- HttpEntity: HTTP header, body 정보를 편리하게 조회, 응답에도 사용 가능
+- RequestEntity: HttpMethod, url 정보가 추가, 요청에서 사용 
+- ResponseEntity: HTTP 상태 코드 설정 가능, 응답에서 사용
+
+
+**요청 파라미터 vs HTTP 메시지 바디**
+- 요청 파라미터를 조회하는 기능: @RequestParam , @ModelAttribute HTTP 메시지 바디를 직접 조회하는 기능: @RequestBody
+
+**스프링(서버)에서 응답 데이터를 만드는 3가지 방법
+- 정적 리소스
+  - 예) 웹 브라우저에 정적인 HTML, css, js를 제공할 때는, 정적 리소스를 사용한다.
+- 뷰 템플릿 사용
+  - 예) 웹 브라우저에 동적인 HTML을 제공할 때는 뷰 템플릿을 사용한다.
+- HTTP 메시지 사용
+  - HTTP API를 제공하는 경우에는 HTML이 아니라 데이터를 전달해야 하므로, HTTP 메시지 바디에 JSON 같은 형식으로 데이터를 실어 보낸다.
+  
+#### HTTP 메시지 컨버터
+뷰 템플릿으로 HTML을 생성해서 응답하는 것이 아니라, HTTP API처럼 JSON 데이터를 HTTP 메시지 바디에서 직접 읽거나 쓰는 경우 HTTP 메시지 컨버터를 사용하면 편리하다.
+
+스프링 MVC는 다음의 경우에 HTTP 메시지 컨버터를 적용한다. 
+- HTTP 요청: `@RequestBody` , `HttpEntity(RequestEntity)` , 
+- HTTP 응답: `@ResponseBody` , `HttpEntity(ResponseEntity)` ,
+
+**주요한 메시지 컨버터**
+- `ByteArrayHttpMessageConverter` : `byte[]` 데이터를 처리한다.
+  - 클래스 타입: `byte[]` , 미디어타입: `*/*` ,
+  - 요청 예) `@RequestBody byte[] data`
+  - 응답 예) `@ResponseBody return byte[]` 쓰기 미디어타입 `application/octet-stream`
+- `StringHttpMessageConverter` : `String` 문자로 데이터를 처리한다. 
+  - 클래스 타입: `String` , 미디어타입: `*/*`
+  - 요청 예) `@RequestBody String data`
+  - 응답 예) `@ResponseBody return "ok"` 쓰기 미디어타입 `text/plain`
+- `MappingJackson2HttpMessageConverter` : application/json
+  - 클래스 타입: 객체 또는 `HashMap` , 미디어타입 `application/json` 관련
+  - 요청 예) `@RequestBody HelloData data`
+  - 응답 예) `@ResponseBody return helloData` 쓰기 미디어타입 `application/json` 관련
+  
+**HTTP 요청 데이터 읽기**  
+HTTP 요청이 오고, 컨트롤러에서 `@RequestBody` , `HttpEntity` 파라미터를 사용한다.
+
+**HTTP 응답 데이터 생성**  
+컨트롤러에서 `@ResponseBody` , `HttpEntity` 로 값이 반환된다.
+
+### 7. 스프링 MVC - 웹 페이지 만들기
+#### 상품 목록 - 타임리프
+- URL 링크 표현식 - @{...},
+  - `@{...}` : 타임리프는 URL 링크를 사용하는 경우 `@{...}` 를 사용한다. 이것을 URL 링크 표현식이라 한다. 
+  - URL 링크 표현식을 사용하면 서블릿 컨텍스트를 자동으로 포함한다.
+  
+- 속성 변경 - th:onclick
+- 리터럴 대체 - |...|
+  - 타임리프에서 문자와 표현식 등은 분리되어 있기 때문에 더해서 사용해야 한다.
+- 반복 출력 - th:each
+  - 반복은 `th:each` 를 사용한다. 이렇게 하면 모델에 포함된 `items` 컬렉션 데이터가 `item` 변수에 하나씩 포함되고, 반복문 안에서 item 변수를 사용할 수 있다.
+- 변수 표현식 - `${...}` 
+  - 모델에 포함된 값이나, 타임리프 변수로 선언한 값을 조회할 수 있다.
+- 내용 변경 - th:text
+
+#### 상품 상세
+상품 상세 컨트롤러와 뷰 개발
