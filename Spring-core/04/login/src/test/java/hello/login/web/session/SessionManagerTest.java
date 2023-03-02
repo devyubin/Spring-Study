@@ -31,7 +31,7 @@ class SessionManagerTest {
 
         // 세션 만료
         sessionManager.expire(request);
-        Object expired = sessionManager.getSession(request); assertThat(expired).isNull();
-        
+        Object expired = sessionManager.getSession(request);
+        assertThat(expired).isNull();
     }
 }
