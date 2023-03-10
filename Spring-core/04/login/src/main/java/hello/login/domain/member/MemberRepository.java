@@ -9,10 +9,10 @@ import java.util.*;
 @Repository
 public class MemberRepository {
 
-    private static Map<Long, Member> store = new HashMap<>(); // static 사용
-    private static long sequence = 0L; // static 사용
+    private static Map<Long, Member> store = new HashMap<>(); //static 사용
+    private static long sequence = 0L;//static 사용
 
-    public Member save (Member member) {
+    public Member save(Member member) {
         member.setId(++sequence);
         log.info("save: member={}", member);
         store.put(member.getId(), member);
@@ -27,15 +27,6 @@ public class MemberRepository {
         return findAll().stream()
                 .filter(m -> m.getLoginId().equals(loginId))
                 .findFirst();
-
-        /*List<Member> all = findAll(); - 이 코드를 간단하게 한 것이 위의 코드이다.
-        for (Member m : all) {
-            if (m.getLoginId().equals(loginId)) {
-                return Optional.of(m);
-            }
-        }
-        return Optional.empty();*/
-
     }
 
     public List<Member> findAll() {
