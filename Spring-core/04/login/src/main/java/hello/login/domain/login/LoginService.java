@@ -5,17 +5,28 @@ import hello.login.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class LoginService {
-
+    
     private final MemberRepository memberRepository;
 
     /**
      * @return null 로그인 실패
-     */
+    */
     public Member login(String loginId, String password) {
-        return memberRepository.findByLoginId(loginId)
+/*        Optional<Member> findMemberOptional = memberRepository.findByLoginId(loginId);
+        Member member = findMemberOptional = memberRepository.findByLoginId(loginId);
+        if (member.getPassword().equals(password)) {
+            return member;
+        } else {
+            return null;
+        }*/
+
+        // Optional을 통해 코드를 효율적으로 변경할 수 있다.
+       return memberRepository.findByLoginId(loginId)
                 .filter(m -> m.getPassword().equals(password))
                 .orElse(null);
     }
