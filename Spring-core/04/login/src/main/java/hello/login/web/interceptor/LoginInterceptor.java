@@ -40,10 +40,10 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         String requestURI = request.getRequestURI();
-        String  uuid = (String) request.getAttribute(LOG_ID);
+        String uuid = (String) request.getAttribute(LOG_ID);
         log.info("RESPONSE [{}][{}][{}]", uuid, requestURI, handler);
         if (ex != null) {
-            log.error("atferCompletion error!!", ex);
+            log.error("afterCompletion error!!", ex);
         }
     }
 }

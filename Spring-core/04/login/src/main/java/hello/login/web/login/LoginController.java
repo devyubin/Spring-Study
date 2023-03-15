@@ -121,4 +121,8 @@ public class LoginController {
         response.addCookie(cookie);
     }
 
+    /**
+     * 로그인 이후 redirect 처리
+     */
+
 }
